@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-text-primary;
+  }
+  
+  * {
+    @apply border-zinc-800;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-accent-primary to-accent-secondary 
+           text-white font-semibold py-3 px-6 rounded-lg
+           hover:shadow-lg hover:shadow-accent-primary/50 
+           transform hover:scale-105 transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+  }
+  
+  .btn-secondary {
+    @apply bg-dark-card border border-zinc-700
+           text-text-primary font-semibold py-3 px-6 rounded-lg
+           hover:bg-dark-hover hover:border-zinc-600
+           transition-all duration-200;
+  }
+  
+  .input-field {
+    @apply w-full bg-dark-card border border-zinc-700 rounded-lg
+           px-4 py-3 text-text-primary placeholder-text-muted
+           focus:outline-none focus:ring-2 focus:ring-accent-primary
+           focus:border-transparent transition-all duration-200;
+  }
+  
+  .card {
+    @apply bg-dark-card border border-zinc-800 rounded-xl
+           p-6 shadow-xl backdrop-blur-sm;
+  }
+  
+  .card-glass {
+    @apply bg-dark-card/50 border border-zinc-800/50 rounded-xl
+           p-6 shadow-xl backdrop-blur-md;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-accent-primary to-accent-secondary
+           bg-clip-text text-transparent;
+  }
+  
+  .link {
+    @apply text-accent-primary hover:text-accent-secondary
+           transition-colors duration-200 cursor-pointer;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5558e3;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #6366f1;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
