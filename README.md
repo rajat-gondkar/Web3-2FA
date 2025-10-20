@@ -32,6 +32,17 @@ A modern web authentication system that uses blockchain wallet signatures as a f
 
 ## 🚀 Getting Started
 
+### Quick Setup (Recommended)
+
+Run the automated setup script:
+```bash
+./setup-env.sh
+```
+
+This interactive script will guide you through configuring all environment variables.
+
+For detailed instructions, see [QUICKSTART.md](QUICKSTART.md)
+
 ### Prerequisites
 - Node.js v18+
 - MongoDB (local or Atlas)
