@@ -1,17 +1,34 @@
 import nodemailer from 'nodemailer';
 
-// Create reusable transporter
+// Create reusable transporter with enhanced configuration for production
 const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: false, // true for 465, false for other ports
+  const config = {
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    secure: false, // Use STARTTLS (port 587)
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD
-    }
-  });
+    },
+    tls: {
+      // Do not fail on invalid certs (useful for some hosting providers)
+      rejectUnauthorized: false
+    },
+    // Connection timeout
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 30000,
+    socketTimeout: 60000, // 60 seconds
+    // Enable debug output in development
+    debug: process.env.NODE_ENV === 'development',
+    logger: process.env.NODE_ENV === 'development'
+  };
+
+  // If service is specified (e.g., 'gmail'), use it for auto-configuration
+  if (process.env.EMAIL_SERVICE) {
+    config.service = process.env.EMAIL_SERVICE;
+  }
+
+  return nodemailer.createTransport(config);
 };
 
 // Generate OTP email HTML template
@@ -122,19 +139,47 @@ export const sendOTPEmail = async (email, otp) => {
   try {
     const transporter = createTransporter();
 
+    // Verify transporter configuration (optional, can be commented out in production)
+    if (process.env.NODE_ENV === 'development') {
+      try {
+        await transporter.verify();
+        console.log('✅ Email server is ready to send messages');
+      } catch (verifyError) {
+        console.warn('⚠️ Email verification warning:', verifyError.message);
+      }
+    }
+
     const mailOptions = {
       from: process.env.EMAIL_FROM,
       to: email,
       subject: 'BlockQuest - Email Verification Code',
-      html: getOTPEmailTemplate(otp)
+      html: getOTPEmailTemplate(otp),
+      // Add text fallback
+      text: `Your BlockQuest verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log(`📧 Email sent: ${info.messageId}`);
+    console.log(`📧 Email sent successfully to ${email}: ${info.messageId}`);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error(`❌ Email sending failed: ${error.message}`);
-    throw new Error('Failed to send email');
+    console.error(`❌ Email sending failed to ${email}:`, {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response
+    });
+    
+    // Provide more helpful error messages
+    let errorMessage = 'Failed to send email';
+    if (error.code === 'ETIMEDOUT' || error.code === 'ECONNECTION') {
+      errorMessage = 'Email server connection timeout. Please check your email configuration.';
+    } else if (error.code === 'EAUTH') {
+      errorMessage = 'Email authentication failed. Please check your email credentials.';
+    } else if (error.responseCode === 535) {
+      errorMessage = 'Invalid email credentials. Please check EMAIL_USER and EMAIL_PASSWORD.';
+    }
+    
+    throw new Error(errorMessage);
   }
 };
 
