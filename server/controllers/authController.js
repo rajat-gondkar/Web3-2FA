@@ -4,10 +4,20 @@ import OTP from '../models/OTP.js';
 import { generateToken, generateTempToken, verifyToken } from '../utils/jwtUtils.js';
 import { sendOTPEmail, generateOTP } from '../utils/emailService.js';
 import { verifyWalletSignature, isValidEthereumAddress } from '../utils/walletUtils.js';
+import { cleanupIncompleteUsers } from '../utils/cleanupUtils.js';
 
 // ==================== REGISTRATION STEP 1: BASIC INFORMATION ====================
 export const registerStep1 = async (req, res) => {
   try {
+    // 🧹 CLEANUP: Delete all incomplete registrations before starting new one
+    const cleanupEnabled = process.env.REGISTRATION_CLEANUP_ENABLED === 'true';
+    if (cleanupEnabled) {
+      const cleanupResult = await cleanupIncompleteUsers();
+      if (cleanupResult.deletedCount > 0) {
+        console.log(`🧹 Cleanup: Removed ${cleanupResult.deletedCount} incomplete registration(s)`);
+      }
+    }
+
     const { username, email, password, confirmPassword } = req.body;
 
     // Validate input

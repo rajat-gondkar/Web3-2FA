@@ -150,6 +150,9 @@ OTP_MAX_ATTEMPTS=3
 OTP_RATE_LIMIT_MINUTES=15
 OTP_MAX_REQUESTS=3
 
+# Registration Cleanup (removes incomplete registrations on new registration)
+REGISTRATION_CLEANUP_ENABLED=true
+
 # Frontend URL (for CORS)
 CLIENT_URL=${CLIENT_URL}
 EOF

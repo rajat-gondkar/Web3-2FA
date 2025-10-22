@@ -53,6 +53,7 @@ A modern web authentication system that uses blockchain wallet transactions as a
 - ✍️ **Transaction Signing** - No actual cryptocurrency transfer, just signature verification
 - 🚫 **Unauthorized Access Prevention** - Only the registered wallet can authenticate
 - 📝 **Multi-Step Registration** - 3-step process: Basic Info → Email OTP → Wallet Integration
+- 🧹 **Auto-Cleanup System** - Incomplete registrations automatically deleted when new users register
 
 ---
 
@@ -388,6 +389,60 @@ function verifyWalletSignature(message, signature, expectedAddress) {
 }
 ```
 
+### Phase 3.5: Auto-Cleanup System
+
+#### Overview
+The system automatically removes incomplete user registrations to keep the database clean and prevent spam/abandoned accounts.
+
+#### How It Works
+- **Trigger**: Cleanup runs automatically when a new user starts registration (accesses `/api/auth/register/step1`)
+- **Target**: All users with `registrationComplete: false`
+- **Scope**: Deletes both incomplete user records and associated OTP entries
+- **Configuration**: Can be enabled/disabled via `REGISTRATION_CLEANUP_ENABLED` environment variable
+
+#### Implementation Details
+
+**Cleanup Utility** (`server/utils/cleanupUtils.js`):
+```javascript
+export const cleanupIncompleteUsers = async () => {
+  // Find all users who haven't completed registration
+  const incompleteUsers = await User.find({ registrationComplete: false });
+  
+  // Delete associated OTPs
+  await OTP.deleteMany({ email: { $in: userEmails } });
+  
+  // Delete incomplete users
+  await User.deleteMany({ _id: { $in: userIds } });
+  
+  return { success: true, deletedCount: N };
+};
+```
+
+**Integration in Registration** (`server/controllers/authController.js`):
+```javascript
+export const registerStep1 = async (req, res) => {
+  // 🧹 Cleanup incomplete registrations first
+  if (process.env.REGISTRATION_CLEANUP_ENABLED === 'true') {
+    await cleanupIncompleteUsers();
+  }
+  
+  // Continue with registration...
+};
+```
+
+#### Benefits
+- ✅ **Automatic Database Maintenance** - No manual cleanup needed
+- ✅ **Prevents Database Bloat** - Incomplete registrations don't accumulate
+- ✅ **Spam Prevention** - Attackers can't fill database with partial registrations
+- ✅ **Fresh Start** - Each new registration starts with a clean slate
+- ✅ **Zero User Impact** - Only affects abandoned registrations, not active users
+
+#### Configuration
+Add to `.env` file:
+```bash
+REGISTRATION_CLEANUP_ENABLED=true  # Set to false to disable
+```
+
 ---
 
 ### Phase 4: Frontend Implementation
@@ -632,7 +687,7 @@ function verifyWalletSignature(message, signature, expectedAddress) {
 | Email spoofing | Use verified email service, SPF/DKIM |
 | Step skipping | Server validates registrationStep before proceeding |
 | Multiple OTP requests | Rate limit to 3 per 15 minutes |
-| Partial registration spam | Auto-delete incomplete registrations after 24-48 hours |
+| Partial registration spam | **Auto-cleanup: Incomplete registrations deleted when new user starts registration** |
 
 ---
 
