@@ -1,35 +1,16 @@
-import nodemailer from 'nodemailer';
+import sgMail from '@sendgrid/mail';
+import dotenv from 'dotenv';
 
-// Create reusable transporter with enhanced configuration for production
-const createTransporter = () => {
-  const config = {
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.EMAIL_PORT) || 587,
-    secure: false, // Use STARTTLS (port 587)
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
-    },
-    tls: {
-      // Do not fail on invalid certs (useful for some hosting providers)
-      rejectUnauthorized: false
-    },
-    // Connection timeout
-    connectionTimeout: 30000, // 30 seconds
-    greetingTimeout: 30000,
-    socketTimeout: 60000, // 60 seconds
-    // Enable debug output in development
-    debug: process.env.NODE_ENV === 'development',
-    logger: process.env.NODE_ENV === 'development'
-  };
+// Load environment variables (in case this module is imported before dotenv.config() in server.js)
+dotenv.config();
 
-  // If service is specified (e.g., 'gmail'), use it for auto-configuration
-  if (process.env.EMAIL_SERVICE) {
-    config.service = process.env.EMAIL_SERVICE;
-  }
-
-  return nodemailer.createTransport(config);
-};
+// Initialize SendGrid with API key
+if (!process.env.SENDGRID_API_KEY) {
+  console.error('⚠️ WARNING: SENDGRID_API_KEY is not set. Email functionality will not work.');
+} else {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  console.log('✅ SendGrid initialized successfully');
+}
 
 // Generate OTP email HTML template
 const getOTPEmailTemplate = (otp) => {
@@ -134,49 +115,48 @@ const getOTPEmailTemplate = (otp) => {
   `;
 };
 
-// Send OTP email
+// Send OTP email using SendGrid
 export const sendOTPEmail = async (email, otp) => {
   try {
-    const transporter = createTransporter();
-
-    // Verify transporter configuration (optional, can be commented out in production)
-    if (process.env.NODE_ENV === 'development') {
-      try {
-        await transporter.verify();
-        console.log('✅ Email server is ready to send messages');
-      } catch (verifyError) {
-        console.warn('⚠️ Email verification warning:', verifyError.message);
-      }
+    if (!process.env.SENDGRID_API_KEY) {
+      throw new Error('SendGrid API key is not configured. Please set SENDGRID_API_KEY environment variable.');
     }
 
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
+    const msg = {
       to: email,
+      from: process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER,
       subject: 'BlockQuest - Email Verification Code',
       html: getOTPEmailTemplate(otp),
-      // Add text fallback
       text: `Your BlockQuest verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`📧 Email sent successfully to ${email}: ${info.messageId}`);
-    return { success: true, messageId: info.messageId };
+    const response = await sgMail.send(msg);
+    console.log(`📧 Email sent successfully to ${email} via SendGrid`);
+    console.log(`📊 Response status: ${response[0].statusCode}`);
+    
+    return { 
+      success: true, 
+      messageId: response[0].headers['x-message-id'],
+      statusCode: response[0].statusCode 
+    };
   } catch (error) {
     console.error(`❌ Email sending failed to ${email}:`, {
       message: error.message,
       code: error.code,
-      command: error.command,
-      response: error.response
+      response: error.response?.body
     });
     
-    // Provide more helpful error messages
+    // Provide more helpful error messages based on SendGrid errors
     let errorMessage = 'Failed to send email';
-    if (error.code === 'ETIMEDOUT' || error.code === 'ECONNECTION') {
-      errorMessage = 'Email server connection timeout. Please check your email configuration.';
-    } else if (error.code === 'EAUTH') {
-      errorMessage = 'Email authentication failed. Please check your email credentials.';
-    } else if (error.responseCode === 535) {
-      errorMessage = 'Invalid email credentials. Please check EMAIL_USER and EMAIL_PASSWORD.';
+    
+    if (error.code === 401 || error.code === 403) {
+      errorMessage = 'SendGrid authentication failed. Please check your SENDGRID_API_KEY.';
+    } else if (error.code === 400) {
+      errorMessage = 'Invalid email configuration. Please verify sender email is verified in SendGrid.';
+    } else if (error.message.includes('API key')) {
+      errorMessage = 'SendGrid API key is missing or invalid.';
+    } else if (error.message) {
+      errorMessage = error.message;
     }
     
     throw new Error(errorMessage);
