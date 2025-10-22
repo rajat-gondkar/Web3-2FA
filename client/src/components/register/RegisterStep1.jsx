@@ -98,117 +98,133 @@ const RegisterStep1 = ({ onNext }) => {
     >
       <ProgressBar currentStep={1} />
 
-      <div className="card-glass">
-        <h2 className="text-3xl font-bold text-center mb-2 gradient-text">
-          Create Account
-        </h2>
-        <p className="text-center text-text-secondary mb-6">
-          Step 1: Enter your basic information
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="johndoe"
-              className="input-field"
-              disabled={loading}
-            />
-            {errors.username && (
-              <p className="mt-1 text-sm text-red-500">{errors.username}</p>
-            )}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="john@example.com"
-              className="input-field"
-              disabled={loading}
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="input-field"
-              disabled={loading}
-            />
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-            )}
-            <p className="mt-1 text-xs text-text-muted">
-              Min 8 chars, uppercase, lowercase, number, special char
+      <div className="card bg-base-100 shadow-2xl border border-base-300">
+        <div className="card-body">
+          <div className="text-center mb-6">
+            <div className="text-6xl mb-4">📝</div>
+            <h2 className="card-title text-3xl justify-center mb-2">
+              <span className="gradient-text">Create Account</span>
+            </h2>
+            <p className="text-base-content/60">
+              Step 1: Enter your basic information
             </p>
           </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              Confirm Password
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="input-field"
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Username */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Username</span>
+              </label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="johndoe"
+                className={`input input-bordered w-full ${errors.username ? 'input-error' : ''}`}
+                disabled={loading}
+              />
+              {errors.username && (
+                <label className="label">
+                  <span className="label-text-alt text-error">{errors.username}</span>
+                </label>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Email Address</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="john@example.com"
+                className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
+                disabled={loading}
+              />
+              {errors.email && (
+                <label className="label">
+                  <span className="label-text-alt text-error">{errors.email}</span>
+                </label>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Password</span>
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className={`input input-bordered w-full ${errors.password ? 'input-error' : ''}`}
+                disabled={loading}
+              />
+              {errors.password ? (
+                <label className="label">
+                  <span className="label-text-alt text-error">{errors.password}</span>
+                </label>
+              ) : (
+                <label className="label">
+                  <span className="label-text-alt">Min 8 chars, uppercase, lowercase, number, special char</span>
+                </label>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text font-medium">Confirm Password</span>
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="••••••••"
+                className={`input input-bordered w-full ${errors.confirmPassword ? 'input-error' : ''}`}
+                disabled={loading}
+              />
+              {errors.confirmPassword && (
+                <label className="label">
+                  <span className="label-text-alt text-error">{errors.confirmPassword}</span>
+                </label>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
               disabled={loading}
-            />
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
-            )}
-          </div>
+              className="btn btn-primary w-full mt-6"
+            >
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-md"></span>
+                  Processing...
+                </>
+              ) : (
+                'Next: Verify Email →'
+              )}
+            </button>
+          </form>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full btn-primary mt-6"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <div className="spinner mr-2"></div>
-                Processing...
-              </span>
-            ) : (
-              'Next: Verify Email →'
-            )}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-sm text-text-secondary">
-          Already have an account?{' '}
-          <a href="/login" className="link font-semibold">
-            Login here
-          </a>
-        </p>
+          <div className="divider"></div>
+          
+          <p className="text-center text-sm">
+            Already have an account?{' '}
+            <a href="/login" className="link link-primary font-semibold">
+              Login here
+            </a>
+          </p>
+        </div>
       </div>
     </motion.div>
   );

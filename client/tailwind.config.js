@@ -40,5 +40,28 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require('daisyui')],
+  daisyui: {
+    themes: [
+      {
+        blockquest: {
+          "primary": "#6366f1",
+          "secondary": "#8b5cf6",
+          "accent": "#f59e0b",
+          "neutral": "#1f2937",
+          "base-100": "#0f0f0f",
+          "base-200": "#1a1a1a",
+          "base-300": "#2a2a2a",
+          "info": "#3b82f6",
+          "success": "#10b981",
+          "warning": "#f59e0b",
+          "error": "#ef4444",
+        },
+      },
+    ],
+    darkTheme: "blockquest",
+    base: true,
+    styled: true,
+    utils: true,
+  },
 }

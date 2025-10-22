@@ -27,7 +27,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-base-100 via-base-200 to-base-300">
       {currentStep === 1 && <RegisterStep1 onNext={handleStep1Complete} />}
       {currentStep === 2 && (
         <RegisterStep2

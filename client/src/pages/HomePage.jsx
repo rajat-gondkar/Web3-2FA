@@ -7,114 +7,212 @@ const HomePage = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
-        className="max-w-2xl w-full"
+        className="max-w-4xl w-full"
       >
-        <div className="card-glass text-center">
-          {/* Success Icon */}
+        {/* Welcome Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-center mb-8"
+        >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-            className="text-8xl mb-6"
+            transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
+            className="text-8xl mb-4"
           >
             🎉
           </motion.div>
-
-          {/* Welcome Message */}
-          <h1 className="text-4xl font-bold gradient-text mb-4">
-            Welcome, {user?.username}!
+          <h1 className="text-5xl font-bold mb-2">
+            <span className="gradient-text">Welcome Back!</span>
           </h1>
-          
-          <p className="text-xl text-text-secondary mb-8">
-            You've successfully logged in with blockchain 2FA
+          <p className="text-xl text-base-content/60">
+            Hello, <span className="font-semibold text-primary">{user?.username}</span>
           </p>
+        </motion.div>
 
-          {/* User Info Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div className="p-4 bg-dark-bg rounded-lg border border-zinc-700">
-              <p className="text-sm text-text-muted mb-2">Username</p>
-              <p className="text-lg font-semibold text-text-primary">{user?.username}</p>
+        {/* Stats Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="stats stats-vertical lg:stats-horizontal shadow-lg bg-base-100 border border-base-300 w-full mb-8"
+        >
+          <div className="stat">
+            <div className="stat-figure text-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
             </div>
-
-            <div className="p-4 bg-dark-bg rounded-lg border border-zinc-700">
-              <p className="text-sm text-text-muted mb-2">Email</p>
-              <p className="text-lg font-semibold text-text-primary">{user?.email}</p>
-            </div>
-
-            <div className="p-4 bg-dark-bg rounded-lg border border-zinc-700 md:col-span-2">
-              <div className="flex items-center justify-center mb-2 space-x-2">
-                <p className="text-sm text-text-muted">Connected Wallet</p>
-                <img 
-                  src={user?.walletType === 'ethereum' ? '/metamask.png' : '/phantom.png'}
-                  alt={user?.walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
-                  className="w-5 h-5 object-contain"
-                />
-                <span className="text-xs px-2 py-1 rounded-full bg-accent-primary/20 text-accent-primary">
-                  {user?.walletType === 'ethereum' ? 'Ethereum' : 'Solana'}
-                </span>
-              </div>
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <p className="text-lg font-mono font-semibold text-green-500">
-                  {user?.walletType === 'ethereum' 
-                    ? formatAddress(user?.walletAddress)
-                    : formatSolanaAddress(user?.walletAddress)
-                  }
-                </p>
-              </div>
-            </div>
+            <div className="stat-title">Username</div>
+            <div className="stat-value text-primary text-2xl">{user?.username}</div>
+            <div className="stat-desc">Your unique identifier</div>
           </div>
 
-          {/* Info Box */}
-          <div className="p-6 bg-gradient-to-r from-accent-primary/10 to-accent-secondary/10 border border-accent-primary/20 rounded-lg">
-            <h3 className="text-xl font-semibold mb-3 text-text-primary">
-              🔐 Your Account is Secured
-            </h3>
-            <div className="text-left space-y-2 text-sm text-text-secondary">
-              <div className="flex items-start">
-                <span className="text-green-500 mr-2">✓</span>
-                <span>Email verified and confirmed</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-500 mr-2">✓</span>
-                <span>Wallet authenticated via blockchain signature</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-500 mr-2">✓</span>
-                <span>Multi-layer authentication active</span>
-              </div>
-              <div className="flex items-start">
-                <span className="text-green-500 mr-2">✓</span>
-                <span>Protected by cryptographic verification</span>
-              </div>
+          <div className="stat">
+            <div className="stat-figure text-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
             </div>
+            <div className="stat-title">Email Address</div>
+            <div className="stat-value text-secondary text-xl break-all">{user?.email}</div>
+            <div className="stat-desc">Verified ✓</div>
           </div>
 
-          {/* Last Login */}
-          {user?.lastLogin && (
-            <p className="mt-6 text-sm text-text-muted">
-              Last login: {new Date(user.lastLogin).toLocaleString()}
-            </p>
-          )}
-        </div>
+          <div className="stat">
+            <div className="stat-figure text-accent">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="inline-block w-8 h-8 stroke-current">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
+            </div>
+            <div className="stat-title">Security Level</div>
+            <div className="stat-value text-accent text-2xl">High</div>
+            <div className="stat-desc">Multi-factor enabled</div>
+          </div>
+        </motion.div>
 
-        {/* Additional Info */}
+        {/* Wallet Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 text-center"
+          className="card bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 border border-primary/20 shadow-xl mb-8"
         >
-          <p className="text-text-muted text-sm">
-            This is a demonstration of blockchain-based 2FA authentication.
+          <div className="card-body">
+            <h2 className="card-title justify-center text-2xl mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              Connected Wallet
+            </h2>
+            
+            <div className="flex flex-col items-center space-y-4">
+              <div className="flex items-center gap-3">
+                <img 
+                  src={user?.walletType === 'ethereum' ? '/metamask.png' : '/phantom.png'}
+                  alt={user?.walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
+                  className="w-12 h-12 object-contain"
+                />
+                <div className="text-left">
+                  <div className="font-semibold text-lg">
+                    {user?.walletType === 'ethereum' ? 'MetaMask' : 'Phantom'} Wallet
+                  </div>
+                  <div className="badge badge-success gap-2">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    Connected
+                  </div>
+                </div>
+              </div>
+
+              <div className="divider my-2"></div>
+
+              <div className="w-full space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm opacity-70">Network:</span>
+                  <div className="badge badge-outline">
+                    {user?.walletType === 'ethereum' ? 'Ethereum Mainnet' : 'Solana Mainnet'}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm opacity-70">Address:</span>
+                  <code className="text-sm font-mono bg-base-200 px-3 py-1 rounded">
+                    {user?.walletType === 'ethereum' 
+                      ? formatAddress(user?.walletAddress)
+                      : formatSolanaAddress(user?.walletAddress)
+                    }
+                  </code>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Security Features */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="card bg-base-100 border border-base-300 shadow-xl mb-8"
+        >
+          <div className="card-body">
+            <h2 className="card-title justify-center text-2xl mb-4">
+              🔐 Security Features Active
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-3 p-4 bg-success/10 rounded-lg border border-success/20">
+                <div className="text-2xl">✓</div>
+                <div>
+                  <div className="font-semibold text-success">Email Verified</div>
+                  <div className="text-sm opacity-70">Your email address is confirmed</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-4 bg-success/10 rounded-lg border border-success/20">
+                <div className="text-2xl">✓</div>
+                <div>
+                  <div className="font-semibold text-success">Wallet Authenticated</div>
+                  <div className="text-sm opacity-70">Blockchain signature verified</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-4 bg-success/10 rounded-lg border border-success/20">
+                <div className="text-2xl">✓</div>
+                <div>
+                  <div className="font-semibold text-success">Multi-Layer Auth</div>
+                  <div className="text-sm opacity-70">Multiple security checkpoints</div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-4 bg-success/10 rounded-lg border border-success/20">
+                <div className="text-2xl">✓</div>
+                <div>
+                  <div className="font-semibold text-success">Crypto Protected</div>
+                  <div className="text-sm opacity-70">Cryptographic verification active</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Last Login Info */}
+        {user?.lastLogin && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="alert bg-base-200 border-base-300"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <div className="font-semibold">Last Login</div>
+              <div className="text-sm opacity-70">{new Date(user.lastLogin).toLocaleString()}</div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Footer Info */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="text-center mt-8 space-y-2"
+        >
+          <div className="divider"></div>
+          <p className="text-sm opacity-60">
+            🔒 This is a demonstration of blockchain-based 2FA authentication
           </p>
-          <p className="text-text-muted text-sm mt-2">
-            Your account is secured with both password and wallet signature verification.
+          <p className="text-sm opacity-60">
+            Your account is secured with both password and wallet signature verification
           </p>
         </motion.div>
       </motion.div>

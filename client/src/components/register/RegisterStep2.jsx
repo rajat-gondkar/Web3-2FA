@@ -80,66 +80,81 @@ const RegisterStep2 = ({ userId, email, onNext }) => {
     >
       <ProgressBar currentStep={2} />
 
-      <div className="card-glass">
-        <div className="text-center mb-6">
-          <div className="text-6xl mb-4">📧</div>
-          <h2 className="text-3xl font-bold mb-2 gradient-text">Check Your Email</h2>
-          <p className="text-text-secondary">
-            We sent a 6-digit code to
-          </p>
-          <p className="text-accent-primary font-semibold mt-1">
-            {maskEmail(email)}
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* OTP Input */}
-          <div>
-            <label className="block text-sm font-medium text-text-secondary mb-4 text-center">
-              Enter Verification Code
-            </label>
-            <OTPInput length={6} value={otp} onChange={setOtp} />
+      <div className="card bg-base-100 shadow-2xl border border-base-300">
+        <div className="card-body">
+          <div className="text-center mb-6">
+            <div className="text-6xl mb-4">📧</div>
+            <h2 className="card-title text-3xl justify-center mb-2">
+              <span className="gradient-text">Check Your Email</span>
+            </h2>
+            <p className="text-base-content/60">
+              We sent a 6-digit code to
+            </p>
+            <div className="badge badge-primary badge-lg mt-2 font-mono">
+              {maskEmail(email)}
+            </div>
           </div>
 
-          {/* Resend OTP */}
-          <div className="text-center">
-            {cooldown > 0 ? (
-              <p className="text-sm text-text-muted">
-                Resend available in {cooldown}s
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={handleResend}
-                disabled={resending}
-                className="text-sm link"
-              >
-                {resending ? 'Sending...' : "Didn't receive code? Resend OTP"}
-              </button>
-            )}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* OTP Input */}
+            <div className="form-control">
+              <label className="label justify-center">
+                <span className="label-text font-medium">Enter Verification Code</span>
+              </label>
+              <OTPInput length={6} value={otp} onChange={setOtp} />
+            </div>
+
+            {/* Resend OTP */}
+            <div className="text-center">
+              {cooldown > 0 ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="radial-progress text-primary text-sm" style={{"--value": (60 - cooldown) / 60 * 100, "--size": "2rem", "--thickness": "3px"}}></div>
+                  <p className="text-sm opacity-60">
+                    Resend available in {cooldown}s
+                  </p>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="btn btn-ghost btn-sm"
+                >
+                  {resending ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Sending...
+                    </>
+                  ) : (
+                    "Didn't receive code? Resend OTP"
+                  )}
+                </button>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || otp.length !== 6}
+              className="btn btn-primary w-full"
+            >
+              {loading ? (
+                <>
+                  <span className="loading loading-spinner loading-md"></span>
+                  Verifying...
+                </>
+              ) : (
+                'Verify Email →'
+              )}
+            </button>
+          </form>
+
+          <div className="alert alert-warning mt-6">
+            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span className="text-sm">Check your spam folder if you don't see the email</span>
           </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading || otp.length !== 6}
-            className="w-full btn-primary"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <div className="spinner mr-2"></div>
-                Verifying...
-              </span>
-            ) : (
-              'Verify Email →'
-            )}
-          </button>
-        </form>
-
-        <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-          <p className="text-sm text-yellow-500 text-center">
-            💡 Check your spam folder if you don't see the email
-          </p>
         </div>
       </div>
     </motion.div>

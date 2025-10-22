@@ -1,52 +1,59 @@
 const ProgressBar = ({ currentStep, totalSteps = 3 }) => {
   const steps = [
-    { number: 1, label: 'Basic Info' },
-    { number: 2, label: 'Email OTP' },
-    { number: 3, label: 'Wallet' },
+    { number: 1, label: 'Basic Info', icon: '📝' },
+    { number: 2, label: 'Email OTP', icon: '📧' },
+    { number: 3, label: 'Wallet', icon: '👛' },
   ];
 
   return (
     <div className="w-full max-w-2xl mx-auto mb-8">
-      <div className="flex items-center justify-between">
-        {steps.map((step, index) => (
-          <div key={step.number} className="flex-1 flex items-center">
-            {/* Step circle */}
-            <div className="flex flex-col items-center relative">
-              <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg z-10 transition-all duration-300 ${
-                  currentStep > step.number
-                    ? 'bg-green-500 text-white'
-                    : currentStep === step.number
-                    ? 'bg-gradient-to-r from-accent-primary to-accent-secondary text-white shadow-lg shadow-accent-primary/50'
-                    : 'bg-dark-card border-2 border-zinc-700 text-text-secondary'
-                }`}
-              >
-                {currentStep > step.number ? '✓' : step.number}
+      {/* Desktop/Tablet - Horizontal Steps */}
+      <div className="hidden sm:block">
+        <ul className="steps steps-horizontal w-full">
+          {steps.map((step) => (
+            <li
+              key={step.number}
+              className={`step ${currentStep >= step.number ? 'step-primary' : ''}`}
+              data-content={currentStep > step.number ? '✓' : step.number}
+            >
+              <div className="flex flex-col items-center gap-1 mt-4">
+                <span className="text-2xl">{step.icon}</span>
+                <span className="text-sm font-medium">{step.label}</span>
               </div>
-              <span
-                className={`mt-2 text-sm font-medium ${
-                  currentStep >= step.number ? 'text-text-primary' : 'text-text-muted'
-                }`}
-              >
-                {step.label}
-              </span>
-            </div>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-            {/* Connecting line */}
-            {index < steps.length - 1 && (
-              <div className="flex-1 h-1 mx-4 relative -mt-8">
-                <div className="absolute inset-0 bg-zinc-700 rounded-full"></div>
-                <div
-                  className={`absolute inset-0 rounded-full transition-all duration-500 ${
-                    currentStep > step.number
-                      ? 'bg-gradient-to-r from-accent-primary to-accent-secondary w-full'
-                      : 'w-0'
-                  }`}
-                ></div>
+      {/* Mobile - Vertical Steps */}
+      <div className="sm:hidden">
+        <ul className="steps steps-vertical">
+          {steps.map((step) => (
+            <li
+              key={step.number}
+              className={`step ${currentStep >= step.number ? 'step-primary' : ''}`}
+              data-content={currentStep > step.number ? '✓' : step.number}
+            >
+              <div className="flex items-center gap-2 ml-4">
+                <span className="text-xl">{step.icon}</span>
+                <span className="text-sm font-medium">{step.label}</span>
               </div>
-            )}
-          </div>
-        ))}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Progress percentage */}
+      <div className="mt-4">
+        <div className="flex justify-between text-xs mb-1 opacity-60">
+          <span>Progress</span>
+          <span>{Math.round((currentStep / totalSteps) * 100)}%</span>
+        </div>
+        <progress
+          className="progress progress-primary w-full"
+          value={currentStep}
+          max={totalSteps}
+        ></progress>
       </div>
     </div>
   );

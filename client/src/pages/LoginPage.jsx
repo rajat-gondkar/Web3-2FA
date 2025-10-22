@@ -20,14 +20,14 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
-  const [step, setStep] = useState(1); // 1: credentials, 2: wallet verification
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
   const [tempToken, setTempToken] = useState('');
   const [expectedWallet, setExpectedWallet] = useState('');
-  const [walletType, setWalletType] = useState(''); // 'ethereum' or 'solana'
+  const [walletType, setWalletType] = useState('');
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
@@ -57,7 +57,7 @@ const LoginPage = () => {
         toast.success(`Credentials verified! Please connect your ${walletName} wallet.`);
         setTempToken(response.tempToken);
         setExpectedWallet(response.walletAddress);
-        setWalletType(response.walletType); // Store wallet type
+        setWalletType(response.walletType);
         setUserId(response.userId);
         setStep(2);
       }
@@ -65,7 +65,6 @@ const LoginPage = () => {
       const message = error.response?.data?.message || 'Login failed';
       toast.error(message);
 
-      // Check if registration is incomplete
       if (error.response?.data?.registrationStep) {
         toast.error('Please complete your registration first');
         setTimeout(() => navigate('/register'), 2000);
@@ -76,7 +75,6 @@ const LoginPage = () => {
   };
 
   const handleWalletVerification = async () => {
-    // Check wallet type and connect accordingly
     if (walletType === 'ethereum') {
       await handleMetaMaskVerification();
     } else if (walletType === 'solana') {
@@ -94,23 +92,19 @@ const LoginPage = () => {
     setWalletConnecting(true);
 
     try {
-      // Connect wallet
       const walletAddress = await connectWallet();
 
-      // Check if wallet matches
       if (walletAddress.toLowerCase() !== expectedWallet.toLowerCase()) {
         toast.error('This wallet is not registered to your account');
         setWalletConnecting(false);
         return;
       }
 
-      // Create and sign message
       const message = createLoginMessage(userId);
       toast.loading('Please sign the message in MetaMask...');
       const signature = await signMessage(message);
       toast.dismiss();
 
-      // Verify with backend
       const response = await verifyWallet({
         tempToken,
         walletAddress,
@@ -142,23 +136,19 @@ const LoginPage = () => {
     setWalletConnecting(true);
 
     try {
-      // Connect Phantom wallet
       const walletAddress = await connectPhantom();
 
-      // Check if wallet matches (Solana addresses are case-sensitive)
       if (walletAddress !== expectedWallet) {
         toast.error('This wallet is not registered to your account');
         setWalletConnecting(false);
         return;
       }
 
-      // Create and sign message
       const message = createSolanaLoginMessage(userId, walletAddress);
       toast.loading('Please sign the message in Phantom...');
       const signature = await signMessageWithPhantom(message);
       toast.dismiss();
 
-      // Verify with backend
       const response = await verifyWallet({
         tempToken,
         walletAddress,
@@ -181,129 +171,146 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-base-100 via-base-200 to-base-300">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="card-glass">
-          <div className="text-center mb-8">
-            <div className="text-6xl mb-4">🔐</div>
-            <h2 className="text-3xl font-bold gradient-text">Welcome Back</h2>
-            <p className="text-text-secondary mt-2">
-              {step === 1 ? 'Enter your credentials' : 'Verify with your wallet'}
-            </p>
-          </div>
-
-          {step === 1 ? (
-            /* Step 1: Credentials */
-            <form onSubmit={handleCredentialsSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
-                  Username or Email
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  placeholder="Enter username or email"
-                  className="input-field"
-                  disabled={loading}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  className="input-field"
-                  disabled={loading}
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full btn-primary mt-6"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center">
-                    <div className="spinner mr-2"></div>
-                    Verifying...
-                  </span>
-                ) : (
-                  'Continue to Wallet Verification →'
-                )}
-              </button>
-            </form>
-          ) : (
-            /* Step 2: Wallet Verification */
-            <div className="space-y-4">
-              <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                <p className="text-sm text-blue-400 mb-2">
-                  <strong>Expected {walletType === 'ethereum' ? 'MetaMask' : 'Phantom'} Wallet:</strong>
-                </p>
-                <p className="font-mono text-sm text-text-primary">
-                  {walletType === 'ethereum' ? formatAddress(expectedWallet) : formatSolanaAddress(expectedWallet)}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {walletType === 'ethereum' ? 'Ethereum Network' : 'Solana Network'}
-                </p>
-              </div>
-
-              <button
-                onClick={handleWalletVerification}
-                disabled={walletConnecting}
-                className="w-full btn-primary"
-              >
-                {walletConnecting ? (
-                  <span className="flex items-center justify-center">
-                    <div className="spinner mr-2"></div>
-                    Processing...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center">
-                    <img 
-                      src={walletType === 'ethereum' ? '/metamask.png' : '/phantom.png'}
-                      alt={walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
-                      className="w-5 h-5 mr-2 object-contain"
-                    />
-                    Connect & Verify {walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
-                  </span>
-                )}
-              </button>
-
-              <button
-                onClick={() => setStep(1)}
-                disabled={walletConnecting}
-                className="w-full btn-secondary"
-              >
-                ← Back to Login
-              </button>
-
-              <div className="mt-4 p-4 bg-zinc-800/50 border border-zinc-700 rounded-lg">
-                <p className="text-xs text-text-secondary text-center">
-                  🔒 Connect the wallet you registered with to complete login
-                </p>
-              </div>
+        <div className="card bg-base-100 shadow-2xl border border-base-300">
+          <div className="card-body">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="text-6xl mb-4">🔐</div>
+              <h2 className="card-title text-3xl justify-center mb-2">
+                <span className="gradient-text">Welcome Back</span>
+              </h2>
+              <p className="text-base-content/60">
+                {step === 1 ? 'Enter your credentials' : 'Verify with your wallet'}
+              </p>
             </div>
-          )}
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-text-secondary">
-              Don't have an account?{' '}
-              <Link to="/register" className="link font-semibold">
-                Register here
-              </Link>
-            </p>
+            {step === 1 ? (
+              /* Step 1: Credentials */
+              <form onSubmit={handleCredentialsSubmit} className="space-y-4">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-medium">Username or Email</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    placeholder="Enter username or email"
+                    className="input input-bordered w-full"
+                    disabled={loading}
+                  />
+                </div>
+
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text font-medium">Password</span>
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    className="input input-bordered w-full"
+                    disabled={loading}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn btn-primary w-full mt-6"
+                >
+                  {loading ? (
+                    <span className="loading loading-spinner loading-md"></span>
+                  ) : (
+                    'Continue to Wallet Verification →'
+                  )}
+                </button>
+              </form>
+            ) : (
+              /* Step 2: Wallet Verification */
+              <div className="space-y-4">
+                <div className="alert bg-info/10 border-info/20">
+                  <div className="flex flex-col w-full gap-2">
+                    <div className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span className="font-semibold">Expected {walletType === 'ethereum' ? 'MetaMask' : 'Phantom'} Wallet:</span>
+                    </div>
+                    <div className="flex items-center gap-2 ml-8">
+                      <img 
+                        src={walletType === 'ethereum' ? '/metamask.png' : '/phantom.png'}
+                        alt="wallet"
+                        className="w-5 h-5"
+                      />
+                      <code className="text-sm font-mono">
+                        {walletType === 'ethereum' ? formatAddress(expectedWallet) : formatSolanaAddress(expectedWallet)}
+                      </code>
+                      <div className="badge badge-sm">
+                        {walletType === 'ethereum' ? 'Ethereum' : 'Solana'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleWalletVerification}
+                  disabled={walletConnecting}
+                  className="btn btn-primary w-full gap-2"
+                >
+                  {walletConnecting ? (
+                    <>
+                      <span className="loading loading-spinner loading-md"></span>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <img 
+                        src={walletType === 'ethereum' ? '/metamask.png' : '/phantom.png'}
+                        alt={walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
+                        className="w-5 h-5"
+                      />
+                      Connect & Verify {walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
+                    </>
+                  )}
+                </button>
+
+                <button
+                  onClick={() => setStep(1)}
+                  disabled={walletConnecting}
+                  className="btn btn-ghost w-full"
+                >
+                  ← Back to Login
+                </button>
+
+                <div className="alert">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span className="text-xs">Connect the wallet you registered with to complete login</span>
+                </div>
+              </div>
+            )}
+
+            {/* Footer */}
+            <div className="divider"></div>
+            <div className="text-center">
+              <p className="text-sm text-base-content/60">
+                Don't have an account?{' '}
+                <Link to="/register" className="link link-primary font-semibold">
+                  Register here
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </motion.div>
