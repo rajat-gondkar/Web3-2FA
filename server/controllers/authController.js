@@ -5,6 +5,7 @@ import { generateToken, generateTempToken, verifyToken } from '../utils/jwtUtils
 import { sendOTPEmail, generateOTP } from '../utils/emailService.js';
 import { verifyWalletSignature, isValidEthereumAddress } from '../utils/walletUtils.js';
 import { cleanupIncompleteUsers } from '../utils/cleanupUtils.js';
+import { verifyMultiChainSignature, isValidWalletAddress, getBlockchainDisplayName } from '../utils/multiChainUtils.js';
 
 // ==================== REGISTRATION STEP 1: BASIC INFORMATION ====================
 export const registerStep1 = async (req, res) => {
@@ -228,15 +229,23 @@ export const registerStep2 = async (req, res) => {
   }
 };
 
-// ==================== REGISTRATION STEP 3: WALLET INTEGRATION ====================
+// ==================== REGISTRATION STEP 3: WALLET INTEGRATION (MULTI-CHAIN) ====================
 export const registerStep3 = async (req, res) => {
   try {
-    const { userId, walletAddress, signedMessage, signature } = req.body;
+    const { userId, walletAddress, signedMessage, signature, walletType } = req.body;
 
-    if (!userId || !walletAddress || !signedMessage || !signature) {
+    if (!userId || !walletAddress || !signedMessage || !signature || !walletType) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide all required fields'
+        message: 'Please provide all required fields (userId, walletAddress, signedMessage, signature, walletType)'
+      });
+    }
+
+    // Validate wallet type
+    if (!['ethereum', 'solana'].includes(walletType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid wallet type. Supported: ethereum, solana'
       });
     }
 
@@ -258,17 +267,20 @@ export const registerStep3 = async (req, res) => {
       });
     }
 
-    // Validate Ethereum address format
-    if (!isValidEthereumAddress(walletAddress)) {
+    // Validate wallet address format for the specific blockchain
+    if (!isValidWalletAddress(walletAddress, walletType)) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid Ethereum address'
+        message: `Invalid ${getBlockchainDisplayName(walletType)} address format`
       });
     }
 
+    // Normalize address (lowercase for Ethereum, as-is for Solana)
+    const normalizedAddress = walletType === 'ethereum' ? walletAddress.toLowerCase() : walletAddress;
+
     // Check if wallet already registered by another user
     const existingWallet = await User.findOne({ 
-      walletAddress: walletAddress.toLowerCase(),
+      walletAddress: normalizedAddress,
       _id: { $ne: userId } // Exclude current user
     });
 
@@ -279,8 +291,13 @@ export const registerStep3 = async (req, res) => {
       });
     }
 
-    // Verify wallet signature
-    const isValidSignature = verifyWalletSignature(signedMessage, signature, walletAddress);
+    // Verify wallet signature (multi-chain)
+    const isValidSignature = verifyMultiChainSignature(
+      signedMessage, 
+      signature, 
+      normalizedAddress,
+      walletType
+    );
 
     if (!isValidSignature) {
       return res.status(400).json({
@@ -290,14 +307,16 @@ export const registerStep3 = async (req, res) => {
     }
 
     // Update user with wallet information
-    user.walletAddress = walletAddress.toLowerCase();
+    user.walletAddress = normalizedAddress;
+    user.walletType = walletType;
+    user.blockchainNetwork = walletType === 'ethereum' ? 'ethereum-mainnet' : 'solana-mainnet';
     user.registrationTxHash = signature; // Store signature as proof
     user.isWalletVerified = true;
     user.registrationStep = 4;
     user.registrationComplete = true;
     await user.save();
 
-    console.log(`✅ Wallet connected (Step 3): ${user.username} - ${walletAddress}`);
+    console.log(`✅ Wallet connected (Step 3): ${user.username} - ${walletType.toUpperCase()} - ${normalizedAddress}`);
 
     res.json({
       success: true,
@@ -306,7 +325,9 @@ export const registerStep3 = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        walletAddress: user.walletAddress
+        walletAddress: user.walletAddress,
+        walletType: user.walletType,
+        blockchainNetwork: user.blockchainNetwork
       }
     });
   } catch (error) {
@@ -430,13 +451,14 @@ export const login = async (req, res) => {
     // Generate temporary token for wallet verification
     const tempToken = generateTempToken(user._id);
 
-    console.log(`🔐 Login initiated: ${user.username}`);
+    console.log(`🔐 Login initiated: ${user.username} (${user.walletType.toUpperCase()})`);
 
     res.json({
       success: true,
       message: 'Credentials verified. Please verify with your wallet.',
       tempToken,
       walletAddress: user.walletAddress,
+      walletType: user.walletType, // Send wallet type to frontend
       userId: user._id
     });
   } catch (error) {
@@ -488,8 +510,16 @@ export const verifyWallet = async (req, res) => {
       });
     }
 
+    // Normalize addresses for comparison
+    const normalizedUserAddress = user.walletType === 'ethereum' 
+      ? user.walletAddress.toLowerCase() 
+      : user.walletAddress;
+    const normalizedInputAddress = user.walletType === 'ethereum' 
+      ? walletAddress.toLowerCase() 
+      : walletAddress;
+
     // Check if wallet matches registered wallet
-    if (user.walletAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+    if (normalizedUserAddress !== normalizedInputAddress) {
       return res.status(403).json({
         success: false,
         message: 'This wallet is not registered to your account',
@@ -497,8 +527,13 @@ export const verifyWallet = async (req, res) => {
       });
     }
 
-    // Verify wallet signature
-    const isValidSignature = verifyWalletSignature(signedMessage, signature, walletAddress);
+    // Verify wallet signature (multi-chain)
+    const isValidSignature = verifyMultiChainSignature(
+      signedMessage, 
+      signature, 
+      walletAddress,
+      user.walletType
+    );
 
     if (!isValidSignature) {
       return res.status(400).json({
@@ -514,7 +549,7 @@ export const verifyWallet = async (req, res) => {
     // Generate full JWT token
     const token = generateToken(user._id);
 
-    console.log(`✅ Login successful: ${user.username}`);
+    console.log(`✅ Login successful: ${user.username} (${user.walletType.toUpperCase()})`);
 
     res.json({
       success: true,
@@ -524,7 +559,9 @@ export const verifyWallet = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        walletAddress: user.walletAddress
+        walletAddress: user.walletAddress,
+        walletType: user.walletType,
+        blockchainNetwork: user.blockchainNetwork
       }
     });
   } catch (error) {

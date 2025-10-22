@@ -10,6 +10,13 @@ import {
   isMetaMaskInstalled,
   formatAddress,
 } from '../utils/web3';
+import {
+  connectPhantom,
+  signMessageWithPhantom,
+  createSolanaLoginMessage,
+  isPhantomInstalled,
+  formatSolanaAddress,
+} from '../utils/solana';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginPage = () => {
@@ -20,6 +27,7 @@ const LoginPage = () => {
   });
   const [tempToken, setTempToken] = useState('');
   const [expectedWallet, setExpectedWallet] = useState('');
+  const [walletType, setWalletType] = useState(''); // 'ethereum' or 'solana'
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
   const [walletConnecting, setWalletConnecting] = useState(false);
@@ -45,9 +53,11 @@ const LoginPage = () => {
       const response = await login(formData);
 
       if (response.success) {
-        toast.success('Credentials verified! Please connect your wallet.');
+        const walletName = response.walletType === 'ethereum' ? 'MetaMask' : 'Phantom';
+        toast.success(`Credentials verified! Please connect your ${walletName} wallet.`);
         setTempToken(response.tempToken);
         setExpectedWallet(response.walletAddress);
+        setWalletType(response.walletType); // Store wallet type
         setUserId(response.userId);
         setStep(2);
       }
@@ -66,6 +76,15 @@ const LoginPage = () => {
   };
 
   const handleWalletVerification = async () => {
+    // Check wallet type and connect accordingly
+    if (walletType === 'ethereum') {
+      await handleMetaMaskVerification();
+    } else if (walletType === 'solana') {
+      await handlePhantomVerification();
+    }
+  };
+
+  const handleMetaMaskVerification = async () => {
     if (!isMetaMaskInstalled()) {
       toast.error('MetaMask is not installed');
       window.open('https://metamask.io/download/', '_blank');
@@ -89,6 +108,54 @@ const LoginPage = () => {
       const message = createLoginMessage(userId);
       toast.loading('Please sign the message in MetaMask...');
       const signature = await signMessage(message);
+      toast.dismiss();
+
+      // Verify with backend
+      const response = await verifyWallet({
+        tempToken,
+        walletAddress,
+        signedMessage: message,
+        signature,
+      });
+
+      if (response.success) {
+        toast.success('Login successful! 🎉');
+        authLogin(response.token, response.user);
+        setTimeout(() => navigate('/home'), 1000);
+      }
+    } catch (error) {
+      toast.dismiss();
+      const message = error.message || error.response?.data?.message || 'Wallet verification failed';
+      toast.error(message);
+    } finally {
+      setWalletConnecting(false);
+    }
+  };
+
+  const handlePhantomVerification = async () => {
+    if (!isPhantomInstalled()) {
+      toast.error('Phantom is not installed');
+      window.open('https://phantom.app/', '_blank');
+      return;
+    }
+
+    setWalletConnecting(true);
+
+    try {
+      // Connect Phantom wallet
+      const walletAddress = await connectPhantom();
+
+      // Check if wallet matches (Solana addresses are case-sensitive)
+      if (walletAddress !== expectedWallet) {
+        toast.error('This wallet is not registered to your account');
+        setWalletConnecting(false);
+        return;
+      }
+
+      // Create and sign message
+      const message = createSolanaLoginMessage(userId, walletAddress);
+      toast.loading('Please sign the message in Phantom...');
+      const signature = await signMessageWithPhantom(message);
       toast.dismiss();
 
       // Verify with backend
@@ -182,10 +249,13 @@ const LoginPage = () => {
             <div className="space-y-4">
               <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
                 <p className="text-sm text-blue-400 mb-2">
-                  <strong>Expected Wallet:</strong>
+                  <strong>Expected {walletType === 'ethereum' ? 'MetaMask' : 'Phantom'} Wallet:</strong>
                 </p>
                 <p className="font-mono text-sm text-text-primary">
-                  {formatAddress(expectedWallet)}
+                  {walletType === 'ethereum' ? formatAddress(expectedWallet) : formatSolanaAddress(expectedWallet)}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {walletType === 'ethereum' ? 'Ethereum Network' : 'Solana Network'}
                 </p>
               </div>
 
@@ -201,8 +271,12 @@ const LoginPage = () => {
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">
-                    <span className="mr-2">🦊</span>
-                    Connect & Verify Wallet
+                    <img 
+                      src={walletType === 'ethereum' ? '/metamask.png' : '/phantom.png'}
+                      alt={walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
+                      className="w-5 h-5 mr-2 object-contain"
+                    />
+                    Connect & Verify {walletType === 'ethereum' ? 'MetaMask' : 'Phantom'}
                   </span>
                 )}
               </button>

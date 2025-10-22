@@ -26,8 +26,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     sparse: true, // Allows null until wallet is connected
-    lowercase: true,
     trim: true
+  },
+  walletType: {
+    type: String,
+    enum: ['ethereum', 'solana'],
+    sparse: true // Allows null until wallet is connected
+  },
+  blockchainNetwork: {
+    type: String,
+    sparse: true // e.g., 'ethereum-mainnet', 'solana-mainnet'
   },
   registrationTxHash: {
     type: String,
@@ -66,6 +74,7 @@ const userSchema = new mongoose.Schema({
 userSchema.index({ email: 1 });
 userSchema.index({ username: 1 });
 userSchema.index({ walletAddress: 1 });
+userSchema.index({ walletType: 1 });
 
 const User = mongoose.model('User', userSchema);
 
