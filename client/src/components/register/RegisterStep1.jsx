@@ -98,7 +98,7 @@ const RegisterStep1 = ({ onNext }) => {
     >
       <ProgressBar currentStep={1} />
 
-      <div className="card bg-base-100 shadow-2xl border border-base-300">
+      <div className="card bg-white/80 backdrop-blur-sm shadow-xl border border-base-300/30">
         <div className="card-body">
           <div className="text-center mb-6">
             <div className="text-6xl mb-4">📝</div>

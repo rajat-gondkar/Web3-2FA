@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply bg-base-100 text-base-content;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   }
   
   * {
@@ -17,38 +18,57 @@
 }
 
 @layer components {
-  /* Keep some custom classes for specific needs */
   .gradient-text {
-    @apply bg-gradient-to-r from-primary to-secondary
-           bg-clip-text text-transparent font-bold;
+    background: linear-gradient(to right, #5B7C99, #7FA99B, #9B8B7E);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 700;
   }
   
   .gradient-btn {
-    @apply btn btn-primary bg-gradient-to-r from-primary to-secondary border-0
-           hover:scale-105 transition-transform;
+    @apply btn bg-primary text-white border-0
+           hover:bg-primary/80 hover:scale-105 transition-all duration-300
+           shadow-lg;
   }
   
   .glass-card {
-    @apply card bg-base-200/50 backdrop-blur-md shadow-xl border border-base-300;
+    @apply card bg-white/80 backdrop-blur-sm shadow-xl border border-base-300/50;
+  }
+
+  .hero-section {
+    @apply min-h-screen flex items-center justify-center
+           bg-gradient-to-br from-base-100 via-base-200 to-neutral/10;
+  }
+
+  .fade-in-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .fade-in-section.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar with pastel colors */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #F5F3EF;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6366f1;
-  border-radius: 4px;
+  background: #5B7C99;
+  border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #5558e3;
+  background: #4A6B88;
 }
 
 /* Loading spinner */

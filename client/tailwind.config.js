@@ -45,17 +45,18 @@ export default {
     themes: [
       {
         blockquest: {
-          "primary": "#6366f1",
-          "secondary": "#8b5cf6",
-          "accent": "#f59e0b",
-          "neutral": "#1f2937",
-          "base-100": "#0f0f0f",
-          "base-200": "#1a1a1a",
-          "base-300": "#2a2a2a",
-          "info": "#3b82f6",
-          "success": "#10b981",
-          "warning": "#f59e0b",
-          "error": "#ef4444",
+          "primary": "#5B7C99",        // Soft slate blue
+          "secondary": "#7FA99B",      // Sage green
+          "accent": "#9B8B7E",         // Warm taupe
+          "neutral": "#E8DFD0",        // Cream
+          "base-100": "#F5F3EF",       // Off-white background
+          "base-200": "#EBE7E0",       // Light warm gray
+          "base-300": "#D4CEC3",       // Medium warm gray
+          "info": "#6B9AC4",           // Soft blue
+          "success": "#8BA888",        // Soft green
+          "warning": "#D4A574",        // Soft amber
+          "error": "#C07A7A",          // Soft red
+          "base-content": "#3E4E5E",   // Dark slate for text
         },
       },
     ],

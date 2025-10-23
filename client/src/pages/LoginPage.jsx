@@ -171,21 +171,21 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-base-100 via-base-200 to-base-300">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-base-100 via-base-200 to-neutral/20">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="card bg-base-100 shadow-2xl border border-base-300">
+        <div className="card bg-white/80 backdrop-blur-sm shadow-xl border border-base-300/30">
           <div className="card-body">
             {/* Header */}
             <div className="text-center mb-6">
               <div className="text-6xl mb-4">🔐</div>
-              <h2 className="card-title text-3xl justify-center mb-2">
-                <span className="gradient-text">Welcome Back</span>
+              <h2 className="card-title text-3xl justify-center mb-2 text-base-content">
+                Welcome Back
               </h2>
-              <p className="text-base-content/60">
+              <p className="text-base-content/60 font-light">
                 {step === 1 ? 'Enter your credentials' : 'Verify with your wallet'}
               </p>
             </div>
