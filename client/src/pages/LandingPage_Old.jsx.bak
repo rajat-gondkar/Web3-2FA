@@ -25,7 +25,7 @@ const LandingPage = () => {
 
         {/* Title */}
         <h1 className="text-6xl font-bold mb-4 gradient-text">
-          BlockQuest
+          Auth3
         </h1>
         
         <p className="text-2xl text-text-secondary mb-8">

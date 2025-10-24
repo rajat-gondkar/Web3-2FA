@@ -29,8 +29,8 @@ const testSendGrid = async () => {
       to: process.env.EMAIL_USER || 'rajat.contacts05@gmail.com',
       from: process.env.SENDGRID_FROM_EMAIL || 'rajat.contacts05@gmail.com',
       subject: 'SendGrid Test Email',
-      text: 'This is a test email from BlockQuest',
-      html: '<strong>This is a test email from BlockQuest</strong>',
+      text: 'This is a test email from Auth3',
+      html: '<strong>This is a test email from Auth3</strong>',
     };
     
     const response = await sgMail.send(msg);
@@ -63,7 +63,7 @@ const testSendGrid = async () => {
   }
 };
 
-console.log('🚀 BlockQuest SendGrid Tester\n');
+console.log('🚀 Auth3 SendGrid Tester\n');
 console.log('========================================\n');
 
 testSendGrid();

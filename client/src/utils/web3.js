@@ -89,7 +89,7 @@ export const signMessage = async (message) => {
  */
 export const createRegistrationMessage = (userId) => {
   const timestamp = Date.now();
-  return `BlockQuest - registration\n\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves ownership of your wallet.`;
+  return `Auth3 - registration\n\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves ownership of your wallet.`;
 };
 
 /**
@@ -99,7 +99,7 @@ export const createRegistrationMessage = (userId) => {
  */
 export const createLoginMessage = (userId) => {
   const timestamp = Date.now();
-  return `BlockQuest - login\n\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves ownership of your wallet.`;
+  return `Auth3 - login\n\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves ownership of your wallet.`;
 };
 
 /**

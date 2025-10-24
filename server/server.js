@@ -50,7 +50,7 @@ app.use('/api/auth', authRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
-    message: 'BlockQuest Server is running',
+    message: 'Auth3 Server is running',
     timestamp: new Date().toISOString()
   });
 });
@@ -79,7 +79,7 @@ app.listen(PORT, () => {
   console.log('');
   console.log('╔════════════════════════════════════════════════╗');
   console.log('║                                                ║');
-  console.log('║        🔐 BlockQuest Server Started 🚀        ║');
+  console.log('║        🔐 Auth3 Server Started 🚀        ║');
   console.log('║                                                ║');
   console.log('╚════════════════════════════════════════════════╝');
   console.log('');

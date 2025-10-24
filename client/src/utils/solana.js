@@ -109,7 +109,7 @@ export const getPhantomAccount = async () => {
  */
 export const createSolanaRegistrationMessage = (userId, walletAddress) => {
   const timestamp = Date.now();
-  return `BlockQuest Registration\n\nWallet: ${walletAddress}\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves you own this Solana wallet.`;
+  return `Auth3 Registration\n\nWallet: ${walletAddress}\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves you own this Solana wallet.`;
 };
 
 /**
@@ -121,7 +121,7 @@ export const createSolanaRegistrationMessage = (userId, walletAddress) => {
 export const createSolanaLoginMessage = (userId, walletAddress) => {
   const timestamp = Date.now();
   const nonce = Math.random().toString(36).substring(7);
-  return `BlockQuest Login\n\nWallet: ${walletAddress}\nUser ID: ${userId}\nNonce: ${nonce}\nTimestamp: ${timestamp}\n\nSign this message to authenticate with your Solana wallet.`;
+  return `Auth3 Login\n\nWallet: ${walletAddress}\nUser ID: ${userId}\nNonce: ${nonce}\nTimestamp: ${timestamp}\n\nSign this message to authenticate with your Solana wallet.`;
 };
 
 /**

@@ -36,7 +36,7 @@ export const verifyWalletSignature = (message, signature, expectedAddress) => {
  */
 export const createSignatureMessage = (purpose, userId) => {
   const timestamp = Date.now();
-  return `BlockQuest - ${purpose}\n\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves ownership of your wallet.`;
+  return `Auth3 - ${purpose}\n\nUser ID: ${userId}\nTimestamp: ${timestamp}\n\nThis signature proves ownership of your wallet.`;
 };
 
 /**

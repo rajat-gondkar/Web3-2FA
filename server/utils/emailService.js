@@ -91,7 +91,7 @@ const getOTPEmailTemplate = (otp) => {
     <body>
         <div class="container">
             <div class="header">
-                <h1>🔐 BlockQuest</h1>
+                <h1>🔐 Auth3</h1>
             </div>
             <div class="content">
                 <h2>Verify Your Email</h2>
@@ -101,12 +101,12 @@ const getOTPEmailTemplate = (otp) => {
                 <div class="security-note">
                     <p><strong>⚠️ Security Notice:</strong></p>
                     <p>• Never share this code with anyone</p>
-                    <p>• BlockQuest will never ask for this code</p>
+                    <p>• Auth3 will never ask for this code</p>
                     <p>• If you didn't request this code, please ignore this email</p>
                 </div>
             </div>
             <div class="footer">
-                <p>&copy; 2025 BlockQuest. All rights reserved.</p>
+                <p>&copy; 2025 Auth3. All rights reserved.</p>
                 <p>Blockchain-based Authentication Platform</p>
             </div>
         </div>
@@ -125,9 +125,9 @@ export const sendOTPEmail = async (email, otp) => {
     const msg = {
       to: email,
       from: process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER,
-      subject: 'BlockQuest - Email Verification Code',
+      subject: 'Auth3 - Email Verification Code',
       html: getOTPEmailTemplate(otp),
-      text: `Your BlockQuest verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`
+      text: `Your Auth3 verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`
     };
 
     const response = await sgMail.send(msg);

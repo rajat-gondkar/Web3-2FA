@@ -26,7 +26,7 @@ const Navbar = () => {
       <div className="navbar-start">
         <Link to="/" className="btn btn-ghost normal-case text-xl gap-2 hover:bg-transparent">
           <span className="text-2xl">🔐</span>
-          <span className="font-bold text-primary hidden sm:inline">BlockQuest</span>
+          <span className="font-bold text-primary hidden sm:inline">Auth3</span>
         </Link>
       </div>
 
