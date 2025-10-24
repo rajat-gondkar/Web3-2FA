@@ -80,7 +80,7 @@ const RegisterStep2 = ({ userId, email, onNext }) => {
     >
       <ProgressBar currentStep={2} />
 
-      <div className="card bg-white/80 backdrop-blur-sm shadow-xl border border-base-300/30">
+      <div className="card bg-base-200/80 backdrop-blur-sm shadow-xl border border-base-300 hover:shadow-secondary/20">
         <div className="card-body">
           <div className="text-center mb-6">
             <div className="text-6xl mb-4">📧</div>

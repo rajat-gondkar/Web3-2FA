@@ -19,7 +19,7 @@
 
 @layer components {
   .gradient-text {
-    background: linear-gradient(to right, #5B7C99, #7FA99B, #9B8B7E);
+    background: linear-gradient(to right, #6366f1, #8b5cf6, #ec4899);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -27,18 +27,18 @@
   }
   
   .gradient-btn {
-    @apply btn bg-primary text-white border-0
-           hover:bg-primary/80 hover:scale-105 transition-all duration-300
-           shadow-lg;
+    @apply btn bg-gradient-to-r from-primary to-secondary text-white border-0
+           hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-lg;
+    box-shadow: 0 10px 15px -3px rgb(99 102 241 / 0.5), 0 4px 6px -4px rgb(99 102 241 / 0.5);
   }
   
   .glass-card {
-    @apply card bg-white/80 backdrop-blur-sm shadow-xl border border-base-300/50;
+    @apply card bg-base-200/80 backdrop-blur-md shadow-xl border border-base-300/50;
   }
 
   .hero-section {
     @apply min-h-screen flex items-center justify-center
-           bg-gradient-to-br from-base-100 via-base-200 to-neutral/10;
+           bg-gradient-to-br from-base-100 via-base-200 to-base-300;
   }
 
   .fade-in-section {
@@ -53,22 +53,22 @@
   }
 }
 
-/* Custom scrollbar with pastel colors */
+/* Custom scrollbar with dark theme */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5F3EF;
+  background: #0f172a;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #5B7C99;
+  background: #6366f1;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4A6B88;
+  background: #4f46e5;
 }
 
 /* Loading spinner */

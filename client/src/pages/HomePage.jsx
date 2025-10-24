@@ -7,7 +7,7 @@ const HomePage = () => {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-neutral/20 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-200 to-base-300 flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -29,10 +29,10 @@ const HomePage = () => {
           >
             🎉
           </motion.div>
-          <h1 className="text-5xl font-bold mb-2 text-base-content">
+          <h1 className="text-5xl font-bold mb-2 gradient-text">
             Welcome Back!
           </h1>
-          <p className="text-xl text-base-content/60">
+          <p className="text-xl text-base-content/70">
             Hello, <span className="font-semibold text-primary">{user?.username}</span>
           </p>
         </motion.div>
@@ -42,7 +42,7 @@ const HomePage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="stats stats-vertical lg:stats-horizontal shadow-xl bg-white/80 backdrop-blur-sm border border-base-300/30 w-full mb-8"
+          className="stats stats-vertical lg:stats-horizontal shadow-xl bg-base-200/80 backdrop-blur-sm border border-base-300 w-full mb-8"
         >
           <div className="stat">
             <div className="stat-figure text-primary">
@@ -52,7 +52,7 @@ const HomePage = () => {
             </div>
             <div className="stat-title text-base-content/60">Username</div>
             <div className="stat-value text-primary text-2xl">{user?.username}</div>
-            <div className="stat-desc text-base-content/50">Your unique identifier</div>
+            <div className="stat-desc text-base-content/60">Your unique identifier</div>
           </div>
 
           <div className="stat">
@@ -63,7 +63,7 @@ const HomePage = () => {
             </div>
             <div className="stat-title text-base-content/60">Email Address</div>
             <div className="stat-value text-secondary text-xl break-all">{user?.email}</div>
-            <div className="stat-desc text-base-content/50">Verified ✓</div>
+            <div className="stat-desc text-base-content/60">Verified ✓</div>
           </div>
 
           <div className="stat">
@@ -74,7 +74,7 @@ const HomePage = () => {
             </div>
             <div className="stat-title text-base-content/60">Security Level</div>
             <div className="stat-value text-accent text-2xl">High</div>
-            <div className="stat-desc text-base-content/50">Multi-factor enabled</div>
+            <div className="stat-desc text-base-content/60">Multi-factor enabled</div>
           </div>
         </motion.div>
 
@@ -83,7 +83,7 @@ const HomePage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="card bg-white/80 backdrop-blur-sm border border-base-300/30 shadow-xl mb-8"
+          className="card bg-base-200/80 backdrop-blur-sm border border-base-300 shadow-xl hover:shadow-primary/20 mb-8"
         >
           <div className="card-body">
             <h2 className="card-title justify-center text-2xl mb-4 text-base-content">
@@ -122,7 +122,7 @@ const HomePage = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-base-content/60">Address:</span>
-                  <code className="text-sm font-mono bg-base-200/50 text-base-content px-3 py-1 rounded">
+                  <code className="text-sm font-mono bg-base-100 text-base-content px-3 py-1 rounded">
                     {user?.walletType === 'ethereum' 
                       ? formatAddress(user?.walletAddress)
                       : formatSolanaAddress(user?.walletAddress)
@@ -139,7 +139,7 @@ const HomePage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="card bg-white/80 backdrop-blur-sm border border-base-300/30 shadow-xl mb-8"
+          className="card bg-base-200/80 backdrop-blur-sm border border-base-300 shadow-xl hover:shadow-secondary/20 mb-8"
         >
           <div className="card-body">
             <h2 className="card-title justify-center text-2xl mb-4 text-base-content">
@@ -188,7 +188,7 @@ const HomePage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="alert bg-white/60 backdrop-blur-sm border border-base-300/30 shadow-lg"
+            className="alert bg-base-200/60 backdrop-blur-sm border border-base-300 shadow-lg"
           >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-info shrink-0 w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -208,10 +208,10 @@ const HomePage = () => {
           className="text-center mt-8 space-y-2"
         >
           <div className="divider"></div>
-          <p className="text-sm text-base-content/50">
+          <p className="text-sm text-base-content/60">
             🔒 This is a demonstration of blockchain-based 2FA authentication
           </p>
-          <p className="text-sm text-base-content/50">
+          <p className="text-sm text-base-content/60">
             Your account is secured with both password and wallet signature verification
           </p>
         </motion.div>

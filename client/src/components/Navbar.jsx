@@ -22,11 +22,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar bg-white/80 backdrop-blur-md border-b border-base-300/30 sticky top-0 z-50 shadow-sm">
+    <div className="navbar bg-base-200/95 backdrop-blur-md border-b border-base-300 sticky top-0 z-50 shadow-lg">
       <div className="navbar-start">
         <Link to="/" className="btn btn-ghost normal-case text-xl gap-2 hover:bg-transparent">
           <span className="text-2xl">🔐</span>
-          <span className="font-bold text-primary hidden sm:inline">Auth3</span>
+          <span className="gradient-text hidden sm:inline">BlockQuest</span>
         </Link>
       </div>
 
@@ -35,9 +35,9 @@ const Navbar = () => {
           <>
             {/* Wallet Display */}
             {user?.walletAddress && (
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/5 border border-primary/20 rounded-full">
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/30 rounded-full">
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                <span className="text-sm font-mono text-base-content/80">
+                <span className="text-sm font-mono text-base-content">
                   {formatWalletAddress(user.walletAddress)}
                 </span>
               </div>
@@ -45,15 +45,15 @@ const Navbar = () => {
 
             {/* User Dropdown */}
             <div className="dropdown dropdown-end">
-              <label tabIndex={0} className="btn btn-ghost gap-2 hover:bg-base-200/50">
+              <label tabIndex={0} className="btn btn-ghost gap-2 hover:bg-base-300">
                 <div className="avatar placeholder">
-                  <div className="bg-primary text-white rounded-full w-8">
+                  <div className="bg-gradient-to-br from-primary to-secondary text-white rounded-full w-8">
                     <span className="text-sm">{user?.username?.charAt(0).toUpperCase()}</span>
                   </div>
                 </div>
                 <span className="hidden sm:inline text-base-content">{user?.username}</span>
               </label>
-              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-white border border-base-300/30 rounded-2xl w-52 gap-1 mt-2">
+              <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow-xl bg-base-200 border border-base-300 rounded-2xl w-52 gap-1 mt-2">
                 <li className="menu-title px-4 pt-2">
                   <span className="text-xs text-base-content/60">Account</span>
                 </li>
@@ -94,7 +94,7 @@ const Navbar = () => {
             <Link to="/login" className="btn btn-ghost hover:bg-primary/10 text-base-content">
               Login
             </Link>
-            <Link to="/register" className="btn bg-primary text-white border-0 hover:bg-primary/80 shadow-lg">
+            <Link to="/register" className="gradient-btn">
               Register
             </Link>
           </div>
