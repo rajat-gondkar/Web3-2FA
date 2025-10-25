@@ -104,9 +104,9 @@ const HomePage = () => {
                   <div className="font-semibold text-lg text-base-content">
                     {user?.walletType === 'ethereum' ? 'MetaMask' : 'Phantom'} Wallet
                   </div>
-                  <div className="badge badge-success gap-2 bg-success/20 text-success border-success/30">
+                  <div className="badge badge-success gap-2 bg-success/20 border-success/30">
                     <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                    Connected
+                    <span className="text-white">Connected</span>
                   </div>
                 </div>
               </div>
