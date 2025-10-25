@@ -7,14 +7,12 @@
 Traditional 2FA systems rely on **something you receive** (SMS codes, email OTPs) which can be:
 - 📱 Intercepted (SIM swapping, email hacks)
 - ⏰ Time-sensitive and inconvenient
-- 🔄 Repeated for every login
 - 🛡️ Vulnerable to phishing attacks
 
 **Web3-2FA** uses **something you own** - your crypto wallet:
 - 🔑 **Private Key Verification**: Only wallet owner can sign messages
 - 🚫 **No Interceptable Codes**: Cryptographic signatures can't be stolen mid-transmission
 - ⚡ **Instant Verification**: No waiting for codes, instant wallet signing
-- 🎭 **True Identity Proof**: Wallet signatures prove actual ownership, not just access to a phone/email
 - 🌐 **Decentralized**: No reliance on telecom networks or email servers
 
 ## ✨ How It Works
