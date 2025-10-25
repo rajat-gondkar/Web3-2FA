@@ -131,24 +131,6 @@ POST /api/auth/register/step3    → Wallet binding (signs message)
 POST /api/auth/login              → Credentials check
 POST /api/auth/verify-wallet      → Wallet signature verification
 GET  /api/auth/me                 → Get user profile (protected)
-```
-
-## � Future Enhancements
-
-- [ ] Multi-signature support for enterprise accounts
-- [ ] Biometric + Wallet combination for mobile
-- [ ] Social recovery via trusted wallets
-- [ ] Hardware wallet support (Ledger, Trezor)
-- [ ] On-chain identity verification integration
-
-## 📄 License
-
-MIT License - See LICENSE file for details
-
-## 👤 Author
-
-**Rajat Gondkar**  
-*Reimagining authentication for the Web3 era*
 
 ---
 
