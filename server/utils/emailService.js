@@ -124,7 +124,10 @@ export const sendOTPEmail = async (email, otp) => {
 
     const msg = {
       to: email,
-      from: process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER,
+      from: {
+        email: process.env.SENDGRID_FROM_EMAIL || process.env.EMAIL_USER,
+        name: 'Web3-2FA'
+      },
       subject: 'Auth3 - Email Verification Code',
       html: getOTPEmailTemplate(otp),
       text: `Your Auth3 verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`
