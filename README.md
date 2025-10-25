@@ -1,177 +1,159 @@
-# 🔐 BlockQuest - Blockchain-Based 2FA Authentication
+# 🔐 Web3-2FA - Blockchain-Based Two-Factor Authentication
 
-A modern web authentication system that uses blockchain wallet signatures as a form of Two-Factor Authentication (2FA). Users register by connecting their crypto wallet, and subsequent logins require wallet signature verification.
+> Replacing traditional SMS/Email OTP with cryptographic wallet signatures for true ownership-based authentication.
 
-## ✨ Features
+## 🎯 Why This Matters
 
-- **3-Step Mandatory Registration**: Basic Info → Email OTP → Wallet Integration
-- **Email OTP Verification**: Secure email verification during signup
-- **Blockchain-Based 2FA**: Every login requires wallet signature
-- **Wallet Binding**: One wallet per account, immutable after registration
-- **Protected Routes**: JWT-based authentication
-- **MetaMask Integration**: Seamless Web3 wallet connection
+Traditional 2FA systems rely on **something you receive** (SMS codes, email OTPs) which can be:
+- 📱 Intercepted (SIM swapping, email hacks)
+- ⏰ Time-sensitive and inconvenient
+- 🔄 Repeated for every login
+- 🛡️ Vulnerable to phishing attacks
 
-## 🛠️ Tech Stack
+**Web3-2FA** uses **something you own** - your crypto wallet:
+- 🔑 **Private Key Verification**: Only wallet owner can sign messages
+- 🚫 **No Interceptable Codes**: Cryptographic signatures can't be stolen mid-transmission
+- ⚡ **Instant Verification**: No waiting for codes, instant wallet signing
+- 🎭 **True Identity Proof**: Wallet signatures prove actual ownership, not just access to a phone/email
+- 🌐 **Decentralized**: No reliance on telecom networks or email servers
 
-### Frontend
-- React 18 + Vite
-- Tailwind CSS
-- React Router DOM
-- Ethers.js (Web3)
-- Axios
-- Framer Motion
-- React Hot Toast
+## ✨ How It Works
 
-### Backend
-- Node.js + Express
-- MongoDB + Mongoose
-- JWT Authentication
-- Nodemailer (Email)
-- Ethers.js (Signature Verification)
-- bcryptjs (Password Hashing)
-
-## 🚀 Getting Started
-
-### Quick Setup (Recommended)
-
-Run the automated setup script:
-```bash
-./setup-env.sh
+### Registration Flow
+```
+1. Create Account → 2. Verify Email (one-time OTP) → 3. Bind Wallet (sign message)
 ```
 
-This interactive script will guide you through configuring all environment variables.
+Your wallet becomes **permanently bound** to your account - no SMS needed, no email codes, just pure cryptographic proof.
 
-For detailed instructions, see [QUICKSTART.md](QUICKSTART.md)
+### Login Flow
+```
+1. Enter Credentials → 2. Sign with Your Wallet → ✅ Authenticated
+```
+
+Every login requires **both** your password and wallet signature - even if someone steals your password, they can't sign without your private key.
+
+## �️ Security Advantages Over Traditional OTP
+
+| Feature | Traditional OTP | Web3-2FA |
+|---------|----------------|----------|
+| **Interception Risk** | High (SIM swap, email hack) | None (private key required) |
+| **Phishing Resistance** | Low (code can be entered anywhere) | High (signature tied to message) |
+| **Recovery Complexity** | Moderate (reset via support) | Clear (wallet = identity) |
+| **User Convenience** | Wait for code delivery | Instant wallet signing |
+| **Replay Attacks** | Possible with stolen codes | Impossible (unique signatures) |
+| **Account Takeover** | Possible with SIM swap | Impossible without private key |
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js v18+
+- Node.js 18+
 - MongoDB (local or Atlas)
-- MetaMask browser extension
-- Gmail account with App Password
+- MetaMask or Phantom wallet
+- SendGrid account (for email verification)
 
-### Installation
+### Setup
 
-1. **Clone the repository:**
+1. **Clone & Install:**
 ```bash
-cd BlockQuest-Week1
+git clone <repository-url>
+cd Web3-2FA
+cd server && npm install
+cd ../client && npm install
 ```
 
-2. **Setup Backend:**
+2. **Configure Environment:**
+
+Create `server/.env`:
+```env
+PORT=5001
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+
+# SendGrid for Email
+SENDGRID_API_KEY=your_sendgrid_api_key
+SENDGRID_FROM_EMAIL=your_verified_sender_email
+```
+
+Create `client/.env`:
+```env
+VITE_API_URL=http://localhost:5001
+```
+
+3. **Run:**
 ```bash
-cd server
-npm install
-cp .env.example .env
-# Edit .env with your configuration
-npm run dev
+# Terminal 1 - Backend
+cd server && npm run dev
+
+# Terminal 2 - Frontend
+cd client && npm run dev
 ```
 
-3. **Setup Frontend:**
-```bash
-cd client
-npm install
-cp .env.example .env
-npm run dev
-```
+4. **Access:** http://localhost:5173
 
-4. **Access the application:**
-- Frontend: http://localhost:5173
-- Backend: http://localhost:5001
+## 🔧 Tech Stack
 
-## 📧 Email Setup (Gmail)
+**Frontend:** React 18, Vite, Tailwind CSS, Ethers.js (Ethereum), Solana Web3.js  
+**Backend:** Node.js, Express, MongoDB, JWT, SendGrid  
+**Blockchain:** MetaMask & Phantom wallet integration
 
-1. Enable 2-Step Verification in Google Account
-2. Generate App Password: Security → App Passwords
-3. Use the 16-character password in `server/.env`
+## 🎨 Key Features
 
-## 🔄 User Flow
+- ✅ **Multi-Chain Support**: Works with Ethereum (MetaMask) and Solana (Phantom)
+- 🔐 **Wallet-Bound Accounts**: One wallet = One account (immutable binding)
+- 📧 **Email Verification**: One-time OTP during registration only
+- 🚀 **Instant 2FA**: No waiting for codes, sign instantly with your wallet
+- 🎯 **Protected Routes**: JWT-based session management
+- 💫 **Modern UI**: Dark theme with smooth animations
 
-### Registration (3 Steps - Cannot Skip)
-1. **Basic Information**
-   - Username, email, password
-   - Validation & duplicate checks
-   
-2. **Email Verification**
-   - 6-digit OTP sent to email
-   - Max 3 attempts per OTP
-   - Resend available (rate limited)
-   
-3. **Wallet Integration** (Mandatory)
-   - Connect MetaMask wallet
-   - Sign message (no gas fees)
-   - Wallet bound to account
+## 📊 Use Cases
 
-### Login (2 Steps)
-1. **Credentials**
-   - Username/email + password
-   - Temporary token issued
-   
-2. **Wallet 2FA**
-   - Connect registered wallet
-   - Sign verification message
-   - Full JWT token issued
+- **DeFi Platforms**: Secure user authentication without traditional 2FA vulnerabilities
+- **NFT Marketplaces**: Wallet-based login proves actual asset ownership
+- **Crypto Exchanges**: Enhanced security beyond SMS 2FA
+- **DAO Governance**: Verify member identity for voting
+- **Web3 Applications**: Seamless wallet-first authentication
 
-## 📁 Project Structure
+## 🔒 Security Model
 
 ```
-BlockQuest-Week1/
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/     # Reusable components
-│   │   ├── pages/          # Page components
-│   │   ├── contexts/       # React contexts
-│   │   ├── utils/          # Utility functions
-│   │   └── App.jsx
-│   └── package.json
-├── server/                 # Express backend
-│   ├── models/             # MongoDB schemas
-│   ├── routes/             # API routes
-│   ├── controllers/        # Business logic
-│   ├── middleware/         # Auth middleware
-│   ├── utils/              # Helper functions
-│   ├── config/             # Database config
-│   └── server.js
-└── PROJECT_DOCUMENTATION.md
+Layer 1: Password (Something you know)
+Layer 2: Wallet Signature (Something you own - private key)
+Result: True 2FA that's impossible to bypass without both factors
 ```
 
-## 🔒 Security Features
-
-- Password hashing (bcrypt)
-- JWT authentication
-- OTP rate limiting
-- Attempt limiting
-- Server-side signature verification
-- Wallet uniqueness validation
-- CORS protection
-- Protected routes
+Unlike email/SMS OTP which only proves access to an inbox/phone, wallet signatures **prove cryptographic ownership** - a hacker would need both your password AND your private key.
 
 ## 📝 API Endpoints
 
-- `POST /api/auth/register/step1` - Basic registration
-- `POST /api/auth/register/step2` - Email OTP verification
-- `POST /api/auth/register/step3` - Wallet integration
-- `POST /api/auth/resend-otp` - Resend OTP
-- `POST /api/auth/login` - Login with credentials
-- `POST /api/auth/verify-wallet` - Wallet 2FA verification
-- `GET /api/auth/me` - Get current user (protected)
+```
+POST /api/auth/register/step1    → Basic info
+POST /api/auth/register/step2    → Email OTP verification  
+POST /api/auth/register/step3    → Wallet binding (signs message)
+POST /api/auth/login              → Credentials check
+POST /api/auth/verify-wallet      → Wallet signature verification
+GET  /api/auth/me                 → Get user profile (protected)
+```
 
-## 🎨 UI Features
+## � Future Enhancements
 
-- Dark theme design
-- Gradient accents
-- Smooth animations
-- Loading states
-- Toast notifications
-- Progress indicators
-- Responsive design
+- [ ] Multi-signature support for enterprise accounts
+- [ ] Biometric + Wallet combination for mobile
+- [ ] Social recovery via trusted wallets
+- [ ] Hardware wallet support (Ledger, Trezor)
+- [ ] On-chain identity verification integration
 
 ## 📄 License
 
-MIT License
+MIT License - See LICENSE file for details
 
 ## 👤 Author
 
-Rajat Gondkar
+**Rajat Gondkar**  
+*Reimagining authentication for the Web3 era*
 
 ---
 
-**Note**: This is a demonstration project. For production use, implement additional security measures and thorough testing.
+**💡 The Future of 2FA**: Why wait for codes when you can prove ownership instantly? Web3-2FA leverages blockchain's core strength - cryptographic proof of ownership - to create a 2FA system that's more secure, faster, and immune to traditional attack vectors.
+
+
